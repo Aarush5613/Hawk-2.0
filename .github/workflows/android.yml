@@ -17,7 +17,6 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        # This is the secret sauce: it caches your downloads automatically
         cache: gradle
 
     - name: Setup Gradle
@@ -25,12 +24,14 @@ jobs:
       with:
         gradle-version: 8.2
 
-    - name: Build with Gradle
-      # --no-daemon and --parallel make it more stable on limited-RAM runners
-      run: gradle assembleDebug --no-daemon --parallel -Pkotlin.metrics.enabled=false
+    - name: Build APK
+      run: gradle assembleDebug --no-daemon -Pkotlin.metrics.enabled=false
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: hawk-launcher-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+        # The FIX: Look in all subfolders for any file ending in .apk
+        path: "**/*.apk"
+        # Optional: This prevents the 'failing' if a specific file is missing
+        if-no-files-found: error
