@@ -1,4 +1,4 @@
-// FILE LOCATION: app/build.gradle.kts
+// FILE: app/build.gradle.kts
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -12,8 +12,8 @@ android {
         applicationId = "com.hawk.launcher"
         minSdk = 26
         targetSdk = 34
-        versionCode = 17
-        versionName = "3.5"
+        versionCode = 22
+        versionName = "4.0"
     }
 
     compileOptions {
@@ -25,13 +25,9 @@ android {
         jvmTarget = "17"
     }
 }
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath("com.android.tools.build:gradle:8.2.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
-    }
-}
+
+dependencies {
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.drawerlayout:drawerlayout:1.1.1")
+}}
