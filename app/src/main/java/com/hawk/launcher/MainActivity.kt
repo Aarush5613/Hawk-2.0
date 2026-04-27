@@ -6,71 +6,91 @@ import android.content.pm.ResolveInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
 import android.widget.*
+import androidx.drawerlayout.widget.DrawerLayout
 
 class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 1. Main Container
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setBackgroundColor(Color.BLACK)
-            setPadding(30, 50, 30, 30)
-        }
+        // 1. Create the DrawerLayout (The Gesture Controller)
+        val drawerLayout = DrawerLayout(this)
+        drawerLayout.setBackgroundColor(Color.BLACK)
 
-        // 2. Terminal Header
-        val header = TextView(this).apply {
-            text = "HAWK OS > DIRECTORY_SCAN\n--------------------------"
-            setTextColor(Color.GREEN)
-            textSize = 18f
+        // 2. The Main Screen (Home)
+        val mainScreen = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
         }
-        root.addView(header)
+        val homeText = TextView(this).apply {
+            text = "HAWK OS 2.0\n[SWIPE FROM LEFT FOR APPS]"
+            setTextColor(Color.GREEN)
+            textSize = 20f
+            gravity = Gravity.CENTER
+        }
+        mainScreen.addView(homeText)
 
-        // 3. Scrollable Area for Apps
-        val scrollView = ScrollView(this)
-        val appContainer = LinearLayout(this).apply {
+        // 3. The Slide-in Menu (App List)
+        val appDrawerMenu = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER_HORIZONTAL
+            setBackgroundColor(Color.argb(230, 0, 0, 0)) // Semi-transparent black
+            setPadding(30, 60, 30, 30)
+            layoutParams = DrawerLayout.LayoutParams(800, DrawerLayout.LayoutParams.MATCH_PARENT).apply {
+                gravity = Gravity.START // This enables the LEFT swipe
+            }
         }
 
-        // 4. Fetch All Installed Apps
-        val mainIntent = Intent(Intent.ACTION_MAIN, null).apply {
-            addCategory(Intent.CATEGORY_LAUNCHER)
+        val header = TextView(this).apply {
+            text = "HAWK OS > ALL_APPS_SCAN\n--------------------------"
+            setTextColor(Color.GREEN)
+            textSize = 16f
+            setPadding(0, 0, 0, 30)
         }
+        appDrawerMenu.addView(header)
+
+        // 4. Scrollable Container for All Apps
+        val scrollView = ScrollView(this)
+        val listContainer = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+
+        // 5. Automatic App Scanner (Fetches ALL launchable apps)
+        val intent = Intent(Intent.ACTION_MAIN, null).apply { addCategory(Intent.CATEGORY_LAUNCHER) }
+        val allApps = packageManager.queryIntentActivities(intent, 0)
         
-        val pkgManager = packageManager
-        val appList: List<ResolveInfo> = pkgManager.queryIntentActivities(mainIntent, 0)
+        // Sort apps alphabetically
+        allApps.sortBy { it.loadLabel(packageManager).toString().lowercase() }
 
-        // 5. Build the List
-        for (app in appList) {
-            val appName = app.loadLabel(pkgManager).toString()
-            val pkgName = app.activityInfo.packageName
+        for (app in allApps) {
+            val appName = app.loadLabel(packageManager).toString()
+            val packageName = app.activityInfo.packageName
 
-            val btn = Button(this).apply {
+            val appButton = Button(this).apply {
                 text = "> RUN $appName"
                 setTextColor(Color.GREEN)
                 setBackgroundColor(Color.TRANSPARENT)
-                textSize = 16f
-                gravity = Gravity.START or Gravity.CENTER_VERTICAL
-                setPadding(20, 20, 20, 20)
+                textSize = 14f
+                gravity = Gravity.START
+                setPadding(10, 20, 10, 20)
                 
                 setOnClickListener {
-                    val launchIntent = pkgManager.getLaunchIntentForPackage(pkgName)
+                    val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
                     if (launchIntent != null) {
                         startActivity(launchIntent)
-                    } else {
-                        Toast.makeText(context, "ERR: ACCESS_DENIED", Toast.LENGTH_SHORT).show()
+                        drawerLayout.closeDrawer(Gravity.START)
                     }
                 }
             }
-            appContainer.addView(btn)
+            listContainer.addView(appButton)
         }
 
-        scrollView.addView(appContainer)
-        root.addView(scrollView)
-        setContentView(root)
+        scrollView.addView(listContainer)
+        appDrawerMenu.addView(scrollView)
+
+        // Assemble the UI
+        drawerLayout.addView(mainScreen)
+        drawerLayout.addView(appDrawerMenu)
+
+        setContentView(drawerLayout)
     }
 }
