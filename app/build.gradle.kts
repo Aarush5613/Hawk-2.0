@@ -1,3 +1,4 @@
+// FILE: app/build.gradle.kts (Inside app folder)
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -11,8 +12,8 @@ android {
         applicationId = "com.hawk.launcher"
         minSdk = 26
         targetSdk = 34
-        versionCode = 12
-        versionName = "3.0"
+        versionCode = 15
+        versionName = "3.3"
     }
 
     compileOptions {
@@ -26,7 +27,6 @@ android {
 }
 
 dependencies {
-    // This allows the swipe-from-left menu to work
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.drawerlayout:drawerlayout:1.1.1")
