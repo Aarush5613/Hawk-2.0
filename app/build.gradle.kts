@@ -11,8 +11,8 @@ android {
         applicationId = "com.hawk.launcher"
         minSdk = 26
         targetSdk = 34
-        versionCode = 5
-        versionName = "2.3"
+        versionCode = 6
+        versionName = "2.4"
     }
 
     compileOptions {
@@ -26,6 +26,7 @@ android {
 }
 
 dependencies {
+    // These lines must be inside this 'dependencies' block
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.drawerlayout:drawerlayout:1.1.1")
