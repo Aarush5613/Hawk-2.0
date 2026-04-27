@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace = "com.hawk.launcher"
-    compileSdk = 34
+    compileSdk = 34 
 
     defaultConfig {
         applicationId = "com.hawk.launcher"
         minSdk = 26
         targetSdk = 34
-        versionCode = 6
-        versionName = "2.4"
+        versionCode = 12
+        versionName = "3.0"
     }
 
     compileOptions {
@@ -26,7 +26,7 @@ android {
 }
 
 dependencies {
-    // These lines must be inside this 'dependencies' block
+    // This allows the swipe-from-left menu to work
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.drawerlayout:drawerlayout:1.1.1")
