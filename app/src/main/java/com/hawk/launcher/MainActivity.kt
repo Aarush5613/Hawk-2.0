@@ -1,50 +1,89 @@
 package com.hawk.launcher
 
 import android.app.Activity
-import android.os.Bundle
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.content.IntentFilter
 import android.graphics.Color
+import android.os.BatteryManager
+import android.os.Bundle
 import android.view.Gravity
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 
 class MainActivity : Activity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        // 1. Setup the Root Layout (The Container)
-        val rootLayout = LinearLayout(this)
-        rootLayout.orientation = LinearLayout.VERTICAL
-        rootLayout.setBackgroundColor(Color.BLACK)
-        rootLayout.gravity = Gravity.CENTER
-        rootLayout.layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT
-        )
 
-        // 2. Setup the "Matrix" Title
-        val titleView = TextView(this)
-        titleView.text = "HAWK OS 2.0\nSYSTEM ONLINE"
-        titleView.setTextColor(Color.GREEN)
-        titleView.textSize = 32f
-        titleView.gravity = Gravity.CENTER
-        titleView.setPadding(0, 0, 0, 50)
-        
-        // 3. Setup a Simple Interaction (Fixes the "it" and "Context" errors)
-        titleView.setOnClickListener { view ->
-            val context: Context = view.context
-            Toast.makeText(context, "Scanning System...", Toast.LENGTH_SHORT).show()
-            
-            // Example of a safe Intent call
-            // val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com"))
-            // context.startActivity(intent)
+        // 1. Root Container (The Terminal)
+        val root = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setBackgroundColor(Color.BLACK)
+            gravity = Gravity.CENTER
+            setPadding(40, 40, 40, 40)
         }
 
-        // 4. Assemble the UI
-        rootLayout.addView(titleView)
-        setContentView(rootLayout)
+        // 2. Header
+        val header = TextView(this).apply {
+            text = "HAWK OS v2.0\nKERNEL: STABLE\n-------------------"
+            setTextColor(Color.GREEN)
+            textSize = 18f
+            gravity = Gravity.CENTER
+        }
+
+        // 3. Battery Stats
+        val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { filter ->
+            baseContext.registerReceiver(null, filter)
+        }
+        val level: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+        val batteryText = TextView(this).apply {
+            text = "POWER: $level%"
+            setTextColor(Color.GREEN)
+            textSize = 24f
+            setPadding(0, 20, 0, 10)
+        }
+
+        // 4. RAM Stats
+        val mi = ActivityManager.MemoryInfo()
+        val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        activityManager.getMemoryInfo(mi)
+        val availableMegs = mi.availMem / 0x100000L
+        
+        val ramText = TextView(this).apply {
+            text = "MEM_AVAIL: ${availableMegs}MB"
+            setTextColor(Color.GREEN)
+            textSize = 24f
+            setPadding(0, 0, 0, 40)
+        }
+
+        // 5. App Drawer Button
+        val launchBtn = Button(this).apply {
+            text = "> ACCESS_ALL_APPS"
+            setBackgroundColor(Color.TRANSPARENT)
+            setTextColor(Color.GREEN)
+            textSize = 20f
+            // This pulls up the system's app picker for now
+            setOnClickListener {
+                try {
+                    val intent = Intent(Intent.ACTION_SET_WALLPAPER) // Testing a system trigger
+                    startActivity(intent)
+                    Toast.makeText(context, "Initializing App List...", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Toast.makeText(context, "Terminal Error: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        // Assemble the Terminal
+        root.addView(header)
+        root.addView(batteryText)
+        root.addView(ramText)
+        root.addView(launchBtn)
+
+        setContentView(root)
     }
 }
