@@ -4,7 +4,6 @@ import android.app.Activity
 import android.os.Bundle
 import android.graphics.Color
 import android.view.Gravity
-import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 
@@ -12,17 +11,16 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Create a layout container
+        // Setup a simple black background
         val layout = LinearLayout(this)
-        layout.orientation = LinearLayout.VERTICAL
         layout.setBackgroundColor(Color.BLACK)
         layout.gravity = Gravity.CENTER
 
-        // Create the Matrix text
+        // Setup the green "Matrix" text
         val textView = TextView(this)
-        textView.text = "HAWK OS\nSYSTEM ONLINE\n\n[Version 2.0]"
-        textView.setTextColor(Color.parseColor("#00FF00")) // Matrix Green
-        textView.textSize = 28f
+        textView.text = "HAWK OS 2.0\nSYSTEM ONLINE\n\n[Build Successful]"
+        textView.setTextColor(Color.GREEN)
+        textView.textSize = 30f
         textView.gravity = Gravity.CENTER
         
         layout.addView(textView)
