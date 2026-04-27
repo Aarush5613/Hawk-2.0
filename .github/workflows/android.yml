@@ -3,24 +3,35 @@ name: Android CI
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch: # Allows you to manually click "Run" if needed
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Code
+      uses: actions/checkout@v4
     
-    - name: set up JDK 17
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: gradle
 
-    # Added flags to bypass the statistics error and use pre-installed gradle
-    - name: Build with Gradle
-      run: gradle :app:assembleDebug -Pkotlin.metrics.enabled=false --no-daemon
+    # This creates the 'gradle-wrapper.jar' which is missing from web-created repos
+    - name: Generate Gradle Wrapper
+      run: gradle wrapper
 
+    # This ensures the script you just pasted can actually run
+    - name: Grant Execute Permissions
+      run: chmod +x gradlew
+
+    # The actual compilation step
+    - name: Build with Gradle
+      run: ./gradlew assembleDebug -Pkotlin.metrics.enabled=false
+
+    # Makes the APK available for download on your Moto Edge 60
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
