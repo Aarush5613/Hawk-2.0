@@ -11,20 +11,21 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Setup a simple black background
-        val layout = LinearLayout(this)
-        layout.setBackgroundColor(Color.BLACK)
-        layout.gravity = Gravity.CENTER
+        // Root container with a black background
+        val root = LinearLayout(this)
+        root.setBackgroundColor(Color.BLACK)
+        root.gravity = Gravity.CENTER
+        root.orientation = LinearLayout.VERTICAL
 
-        // Setup the green "Matrix" text
-        val textView = TextView(this)
-        textView.text = "HAWK OS 2.0\nSYSTEM ONLINE\n\n[Build Successful]"
-        textView.setTextColor(Color.GREEN)
-        textView.textSize = 30f
-        textView.gravity = Gravity.CENTER
+        // The "Matrix" style text
+        val title = TextView(this)
+        title.text = "HAWK OS 2.0\nSYSTEM ONLINE"
+        title.setTextColor(Color.GREEN)
+        title.textSize = 32f
+        title.gravity = Gravity.CENTER
         
-        layout.addView(textView)
-        setContentView(layout)
+        root.addView(title)
+        setContentView(root)
     }
 }
 
