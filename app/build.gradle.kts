@@ -5,21 +5,21 @@ plugins {
 
 android {
     namespace = "com.hawk.launcher"
-    compileSdk = 34  // This tells Gradle to use the latest Android tools
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.hawk.launcher"
-        minSdk = 26     // Works on most modern Android phones
+        minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "2.1"
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    
+
     kotlinOptions {
         jvmTarget = "17"
     }
@@ -28,4 +28,5 @@ android {
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.drawerlayout:drawerlayout:1.1.1")
 }
