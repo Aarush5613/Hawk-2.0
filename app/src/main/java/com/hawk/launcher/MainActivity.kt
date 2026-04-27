@@ -32,22 +32,74 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun HawkOS() {
     val context = LocalContext.current
-    var ramText by remember { mutableStateOf("0/0 MB") }
+    val sensors = remember { SensorEngine(context) } // Access our Speed/Weather logic
+    
+    // 1. The "Teleprompters" (State)
+    var ramText by remember { mutableStateOf("SCANNING...") }
+    var netSpeed by remember { mutableStateOf("0 kb/s") }
+    var weather by remember { mutableStateOf("FETCHING WX...") }
     var apps by remember { mutableStateOf(listOf<AppInfo>()) }
 
-    // THE HEARTBEAT: Updates RAM every 500ms
+    // 2. THE HEARTBEAT (The background loop)
     LaunchedEffect(Unit) {
-        apps = getInstalledApps(context) // Load apps once
+        apps = getInstalledApps(context) // Load apps once at start
+        
         while(true) {
-            val mi = ActivityManager.MemoryInfo()
-            val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            // Update RAM Stats
+            val mi = android.app.ActivityManager.MemoryInfo()
+            val am = context.getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
             am.getMemoryInfo(mi)
             val used = (mi.totalMem - mi.availMem) / 1048576L
             val total = mi.totalMem / 1048576L
             ramText = "$used / $total MB"
-            delay(500)
+
+            // Update Network Speed
+            netSpeed = sensors.getNetworkSpeed()
+
+            // Update Weather (Every 10 minutes to save battery)
+            if (System.currentTimeMillis() % 600000 < 1000) {
+                weather = sensors.getWeatherData()
+            }
+
+            delay(500) // Pulse every half-second
         }
     }
+
+    // 3. THE UI (The "Cyberdeck" Look)
+    Row(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+        Column(modifier = Modifier.weight(1f).padding(16.dp)) {
+            // System Status Header
+            Text("HAWK_OS v1.0", color = Color(0xFF00FF41), fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+            Text("[RAM] $ramText", color = Color(0xFF00FF41), fontFamily = FontFamily.Monospace)
+            Text("[NET] $netSpeed", color = Color(0xFF00FF41), fontFamily = FontFamily.Monospace)
+            Text("[WX ] $weather", color = Color(0xFF00FF41), fontFamily = FontFamily.Monospace)
+            
+            Spacer(modifier = Modifier.height(20.dp))
+            
+            // The App List (Niagara Style)
+            LazyColumn {
+                items(apps) { app ->
+                    Text(
+                        text = "> ${app.label.uppercase()}",
+                        color = Color.White,
+                        modifier = Modifier
+                            .padding(vertical = 6.dp)
+                            .clickable { launchApp(context, app.packageName) },
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        }
+        
+        // Right-side Alpha-Bar (Design only for now)
+        Column(modifier = Modifier.width(20.dp).fillMaxHeight(), verticalArrangement = Arrangement.Center) {
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ".forEach { 
+                Text(it.toString(), color = Color.DarkGray, fontSize = 9.sp) 
+            }
+        }
+    }
+}
 
     Row(modifier = Modifier.fillMaxSize().background(Color.Black)) {
         // MAIN TERMINAL (Left Side)
