@@ -17,8 +17,9 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    # Added flags to bypass the statistics error and use pre-installed gradle
     - name: Build with Gradle
-      run: gradle :app:assembleDebug
+      run: gradle :app:assembleDebug -Pkotlin.metrics.enabled=false --no-daemon
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
