@@ -25,10 +25,13 @@ android {
         jvmTarget = "17"
     }
 }
-
-dependencies {
-    // This adds the "Swipe-from-left" menu support
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.drawerlayout:drawerlayout:1.1.1")
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.2.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
+    }
 }
