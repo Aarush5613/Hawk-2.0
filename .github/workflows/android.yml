@@ -23,16 +23,13 @@ jobs:
       with:
         gradle-version: 8.2
 
-    # This command lists your files in the logs so we can see if they are in the wrong place
-    - name: Debug File Structure
-      run: find . -maxdepth 4 -not -path '*/.*'
-
     - name: Build APK
-      # --x (exclude) stops the validation tasks from killing the build
-      run: gradle assembleDebug --no-daemon -x test -x lint -Pkotlin.metrics.enabled=false
+      # We use 'gradle' directly to bypass the missing wrapper issues
+      run: gradle assembleDebug --no-daemon -Pkotlin.metrics.enabled=false
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: hawk-launcher-debug
         path: "**/*.apk"
+        
