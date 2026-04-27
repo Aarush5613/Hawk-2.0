@@ -4,7 +4,16 @@ plugins {
 }
 
 android {
-    // ... other settings like namespace and compileSdk ...
+    namespace = "com.hawk.launcher"
+    compileSdk = 34  // This tells Gradle to use the latest Android tools
+
+    defaultConfig {
+        applicationId = "com.hawk.launcher"
+        minSdk = 26     // Works on most modern Android phones
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
