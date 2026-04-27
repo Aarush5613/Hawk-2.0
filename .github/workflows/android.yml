@@ -17,18 +17,17 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+        # This is the secret sauce: it caches your downloads automatically
+        cache: gradle
 
-    # This is the "Magic" step that fixes the wrapper issues
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
         gradle-version: 8.2
 
-    - name: Grant Execute Permissions
-      run: chmod +x gradlew
-
     - name: Build with Gradle
-      run: ./gradlew assembleDebug -Pkotlin.metrics.enabled=false --no-daemon
+      # --no-daemon and --parallel make it more stable on limited-RAM runners
+      run: gradle assembleDebug --no-daemon --parallel -Pkotlin.metrics.enabled=false
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
