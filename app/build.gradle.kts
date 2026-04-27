@@ -4,17 +4,16 @@ plugins {
 }
 
 android {
-    namespace = "com.hawk.launcher"
-    compileSdk = 34
-    defaultConfig {
-        applicationId = "com.hawk.launcher"
-        minSdk = 26
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+    // ... other settings like namespace and compileSdk ...
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    buildFeatures { compose = true }
-    composeOptions { kotlinCompilerExtensionVersion = "1.5.1" }
+    
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 dependencies {
